@@ -1404,7 +1404,7 @@ const runQueries = (q, fromDate, toDate, id, res) => {
 
       //writing data to excel sheet
       workbook.xlsx
-        .writeFile(`Service_report ${fromDate} to ${toDate}.xlsx`)
+        .writeFile('Service_report.xlsx')
         .then(() => {
           console.log("file saved");
           res.status(200).json({ message: "Query outputs saved to excel!" });
