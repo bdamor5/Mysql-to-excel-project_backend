@@ -1,6 +1,10 @@
 const con = require("./dbConnection");
 const excel = require("exceljs");
-const e = require("express");
+const fs = require("fs");
+const fetch = require("cross-fetch");
+var admin = require("firebase-admin");
+const express = require("express");
+const app = express();
 
 let workbook = new excel.Workbook({
   useStyles: true,
@@ -1404,16 +1408,24 @@ const runQueries = (q, fromDate, toDate, id, res) => {
 
       //writing data to excel sheet
       workbook.xlsx
-        .writeFile('Service_report.xlsx')
+        .writeFile("Service_report.xlsx")
         .then(() => {
-          console.log("file saved");
-          res.status(200).json({ message: "Query outputs saved to excel!" });
+          // console.log("file saved");
+
+          const data = fs.readFileSync("./Service_report.xlsx", {
+            encoding: "base64",
+          });
+
+          res
+            .status(200)
+            .json({ message: "Query outputs saved to excel!", data });
         })
+
         .catch((err) => {
           console.log("err", err);
           res.status(400).json({
             message:
-              "Saving to excel sheet failed! Please Close the file to write to it.",
+              "Saving to excel sheet failed! Please make sure to close the file to write to it.",
             error: err,
           });
         });
