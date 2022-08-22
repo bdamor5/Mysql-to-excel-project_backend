@@ -8,6 +8,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/',(req, res) => {
+  res.status(200).json({message:'Backend Running Successfully!'})
+})
+
 con.connect(function (err) {
   if (err) throw err;
   console.log("DB Connected!");
