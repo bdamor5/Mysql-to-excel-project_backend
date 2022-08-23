@@ -222,32 +222,35 @@ exports.writeToExcel = (req, res, next, fromDate, toDate, ...queries) => {
   //   console.log(queries);
 
   if (fromDate && toDate) {
+    //running a separate query to get booking ids
+
+    let bookingIds = [];
+
+    con.query(
+      "SELECT booking_id FROM bookings WHERE created_on BETWEEN ? AND ? ORDER BY booking_id",
+      [fromDate, toDate],
+      function (err, result, fields) {
+        if (err) {
+          console.log(err);
+        }
+
+        result.map((data, ind) => {
+          bookingIds.push(data.booking_id);
+        });
+      }
+    );
+
     queries.map((query, id) => {
-      runQueries(query, fromDate, toDate, id, res);
+      runQueries(query, fromDate, toDate, id, res,bookingIds);
     });
   } else {
     res.status(400).json({ message: "Dates are not defined!" });
   }
 };
 
-const runQueries = (q, fromDate, toDate, id, res) => {
+const runQueries = (q, fromDate, toDate, id, res,bookingIds) => {
   //   console.log(q);
-
-  let bookingIds = [];
-  //running a separate query to get booking ids
-  con.query(
-    "SELECT booking_id FROM bookings WHERE created_on BETWEEN ? AND ? ORDER BY booking_id",
-    [fromDate, toDate],
-    function (err, result, fields) {
-      if (err) {
-        console.log(err);
-      }
-
-      result.map((data, ind) => {
-        bookingIds.push(data.booking_id);
-      });
-    }
-  );
+  console.log(bookingIds[0]);
 
   con.query(q, [fromDate, toDate], function (err, result, fields) {
     if (err) {

@@ -169,8 +169,6 @@ con.connect(function (err) {
     fromDate = req.body.fromDate;
     toDate = req.body.toDate + ' 23:59:59:999';
 
-    console.log(toDate);
-
     res.status(200).json({});
   });
 
