@@ -225,6 +225,7 @@ exports.writeToExcel = (req, res, next, fromDate, toDate, ...queries) => {
     //running a separate query to get booking ids
 
     let bookingIds = [];
+    let tempSet = new Set();
 
     con.query(
       "SELECT booking_id FROM bookings WHERE created_on BETWEEN ? AND ? ORDER BY booking_id",
@@ -235,20 +236,20 @@ exports.writeToExcel = (req, res, next, fromDate, toDate, ...queries) => {
         }
 
         result.map((data, ind) => {
-          bookingIds.push(data.booking_id);
+          bookingIds.push(Number(data.booking_id));
         });
       }
     );
 
     queries.map((query, id) => {
-      runQueries(query, fromDate, toDate, id, res,bookingIds);
+      runQueries(query, fromDate, toDate, id, res, bookingIds);
     });
   } else {
     res.status(400).json({ message: "Dates are not defined!" });
   }
 };
 
-const runQueries = (q, fromDate, toDate, id, res,bookingIds) => {
+const runQueries = (q, fromDate, toDate, id, res, bookingIds) => {
   //   console.log(q);
 
   con.query(q, [fromDate, toDate], function (err, result, fields) {
@@ -257,12 +258,18 @@ const runQueries = (q, fromDate, toDate, id, res,bookingIds) => {
     }
     if (id === 0) {
       //row2Q
-      result.map((data, ind) => {
-        worksheet.addRow([data.booking_id]);
+  
+      const StatusCol = worksheet.getColumn("booking_id");
+
+      let valuesArr = [];
+
+      bookingIds.map((id) => {
+        valuesArr.push(id);
       });
+
+      StatusCol.values = [, , ...valuesArr];
     } else if (id === 1) {
       //row3Q
-
       const StatusCol = worksheet.getColumn("status");
 
       let valuesArr = [];
