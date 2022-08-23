@@ -167,7 +167,9 @@ con.connect(function (err) {
     // console.log(req.body.toDate);
 
     fromDate = req.body.fromDate;
-    toDate = req.body.toDate;
+    toDate = req.body.toDate + ' 23:59:59:999';
+
+    console.log(toDate);
 
     res.status(200).json({});
   });
@@ -231,7 +233,9 @@ con.connect(function (err) {
   );
 
   app.get("/test", (req, res) => {
-    con.query(row2Q, [fromDate, toDate], function (err, result, fields) {
+    console.log(fromDate)
+    console.log(toDate)
+    con.query("SELECT bookings.booking_id , DATE_FORMAT(booking_track.created_on,'%d-%c-%Y') AS Booking_Date FROM booking_track JOIN bookings ON bookings.booking_id = booking_track.booking_id WHERE booking_track.stage='Created' AND booking_track.status='New Booking' AND booking_track.created_on BETWEEN ? AND ?",[fromDate, toDate], function (err, result, fields) {
       if (err) {
         res.status(400).json(err);
       }
