@@ -250,7 +250,6 @@ exports.writeToExcel = (req, res, next, fromDate, toDate, ...queries) => {
 
 const runQueries = (q, fromDate, toDate, id, res,bookingIds) => {
   //   console.log(q);
-  console.log(bookingIds[0]);
 
   con.query(q, [fromDate, toDate], function (err, result, fields) {
     if (err) {
